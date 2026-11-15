@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="価値観診断">
+<meta name="theme-color" content="#150a1c">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="apple-touch-icon.png">
+<title>価値観診断</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* 一画面アプリ: 夜のネオン看板の下に、お題カードを1枚だけ置く。モードごとに看板の色が変わる */
+  --night:#2a0f24;
+  --night-2:#3d1634;
+  --accent:#ff3d8b;
+  --glow:rgba(255,61,139,.55);
+  --soft:#ffd3e4;
+  --card:#fff7f2;
+  --ink:#2a0f24;
+  --gold:#ffc94d;
+  --display:"Dela Gothic One","Zen Maru Gothic",sans-serif;
+  --body:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;
+  color-scheme:dark;
+}
+body[data-mode="jinsei"]{--night:#241505;--night-2:#3d2609;--accent:#c9730a;--glow:rgba(201,115,10,.6);--soft:#ffe6c2;--ink:#241505;--card:#fffaf2}
+body[data-mode="moshimo"]{--night:#06221f;--night-2:#0c3a34;--accent:#0fa890;--glow:rgba(15,168,144,.6);--soft:#cdf3ec;--ink:#06221f;--card:#f4fbf9}
+body[data-mode="hard"]{--night:#1f0508;--night-2:#3a0a12;--accent:#e0162f;--glow:rgba(224,22,47,.6);--soft:#ffd0d2;--ink:#1f0508}
+body[data-mode="deep"]{--night:#0f1230;--night-2:#1b2050;--accent:#5b5ff0;--glow:rgba(91,95,240,.6);--soft:#d6d8ff;--ink:#0f1230;--card:#f6f6ff}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{
+  background:radial-gradient(120% 80% at 50% 0%,var(--night-2),var(--night) 70%);
+  background-color:var(--night);
+  color:var(--soft);
+  font-family:var(--body);
+  display:flex;flex-direction:column;align-items:center;
+  padding:calc(12px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));gap:10px;
+  overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;
+  transition:background-color .25s;
+}
+header{display:flex;align-items:baseline;justify-content:space-between;width:100%;max-width:440px}
+h1{font-family:var(--display);font-weight:400;font-size:22px;color:var(--accent);letter-spacing:.04em;
+   text-shadow:0 0 14px var(--glow)}
+.count{font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;color:var(--gold)}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%;max-width:440px}
+.modes button{min-height:40px;font-size:13px;padding:0 2px;white-space:nowrap;border-radius:999px;border-width:2px;opacity:.7}
+.modes button[data-m="mix"]{border-style:dashed;border-color:var(--gold);color:var(--gold)}
+.modes button[data-m="mix"][aria-pressed="true"]{background:var(--gold);color:var(--ink)}
+.modes button[aria-pressed="true"]{background:var(--accent);color:#fff;opacity:1}
+main{flex:1;min-height:0;width:100%;max-width:440px;display:flex}
+.card{
+  flex:1;background:var(--card);color:var(--ink);border-radius:22px;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 0 0 3px var(--accent),0 14px 40px rgba(0,0,0,.45);
+}
+.q{
+  background:var(--accent);color:#fff;padding:16px 18px 14px;
+  font-weight:900;font-size:clamp(18px,5.4vw,23px);line-height:1.4;text-wrap:balance;
+}
+.q small{display:block;font-size:12px;font-weight:700;letter-spacing:.14em;opacity:.88;margin-bottom:4px}
+ol{list-style:none;padding:4px 14px 8px;flex:1;display:flex;flex-direction:column;overflow-y:auto}
+li{
+  flex:1;min-height:42px;display:flex;align-items:center;gap:12px;
+  border-bottom:2px dotted color-mix(in srgb,var(--ink) 20%,transparent);
+  font-weight:700;font-size:clamp(15px,4.3vw,18px);line-height:1.3;padding:4px 2px;
+}
+li:last-child{border-bottom:0}
+.k{
+  flex:none;width:34px;height:34px;border-radius:10px;transform:rotate(-4deg);
+  display:grid;place-items:center;font-family:var(--display);font-size:17px;
+  background:var(--ink);color:var(--gold);
+}
+li:nth-child(even) .k{transform:rotate(4deg);background:var(--accent);color:#fff}
+nav{display:grid;grid-template-columns:1fr 1.6fr 1fr;gap:10px;width:100%;max-width:440px}
+button{
+  font-family:var(--body);font-weight:900;font-size:16px;
+  min-height:52px;border-radius:16px;border:2px solid var(--accent);
+  background:transparent;color:var(--soft);cursor:pointer;
+}
+button.main{background:var(--accent);color:#fff;font-size:18px}
+button:active{transform:translateY(2px)}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+main{perspective:1000px}
+.swap{animation:none}
+@keyframes flip{0%{transform:rotateY(-95deg) scale(.92);opacity:.2}60%{opacity:1}100%{transform:none}}
+.wobble{animation:wob .5s ease-in-out}
+@keyframes wob{0%,100%{transform:none}30%{transform:rotate(-2deg) scale(1.02)}70%{transform:rotate(2deg) scale(1.02)}}
+.quake{animation:quake .6s linear}
+@keyframes quake{0%,100%{transform:none}10%{transform:translate(-9px,4px) rotate(-2deg)}25%{transform:translate(8px,-5px) rotate(2deg)}40%{transform:translate(-7px,-3px) rotate(-1.5deg)}55%{transform:translate(7px,5px) rotate(1.5deg)}70%{transform:translate(-4px,2px)}85%{transform:translate(3px,-2px)}}
+#fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10}
+#fx span{position:absolute;line-height:1;will-change:transform,opacity}
+.heart{bottom:-48px;animation:rise var(--d) ease-out var(--w) forwards}
+@keyframes rise{0%{transform:translate(0,0) scale(.4) rotate(0)}15%{transform:translate(calc(var(--x)*.2),-14vh) scale(1.15) rotate(calc(var(--r)*.3))}100%{transform:translate(var(--x),-112vh) scale(1) rotate(var(--r));opacity:0}}
+.fire{top:-56px;animation:fall var(--d) cubic-bezier(.5,0,1,.6) var(--w) forwards}
+@keyframes fall{to{transform:translate(var(--x),118vh) rotate(var(--r))}}
+.stamp{left:50%;top:42%;font-family:var(--display);font-size:clamp(44px,15vw,72px);color:#ff2a45;white-space:nowrap;
+  border:6px solid #ff2a45;border-radius:14px;padding:6px 18px;background:rgba(31,5,8,.82);
+  text-shadow:0 0 18px rgba(255,42,69,.8);animation:slam 1.25s ease-out forwards}
+@keyframes slam{0%{transform:translate(-50%,-50%) rotate(-12deg) scale(4);opacity:0}18%{transform:translate(-50%,-50%) rotate(-12deg) scale(.9);opacity:1}26%{transform:translate(-50%,-50%) rotate(-12deg) scale(1.08)}34%,78%{transform:translate(-50%,-50%) rotate(-12deg) scale(1);opacity:1}100%{transform:translate(-50%,-50%) rotate(-12deg) scale(1.1);opacity:0}}
+#flash{position:fixed;inset:0;pointer-events:none;z-index:9;background:#ff1030;opacity:0}
+#flash.on{animation:flash .7s ease-out}
+@keyframes flash{0%{opacity:.75}30%{opacity:.1}45%{opacity:.5}100%{opacity:0}}
+#gate{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:20px;background:rgba(12,0,3,.93);
+  --accent:#e0162f;--soft:#ffd0d2}
+#gate[hidden]{display:none}
+.gbox{width:100%;max-width:380px;background:#1f0508;border:3px solid #e0162f;border-radius:20px;overflow:hidden;text-align:center;color:#ffd0d2;
+  animation:gin .45s cubic-bezier(.2,.9,.3,1.3),gpulse .9s .45s infinite alternate}
+@keyframes gin{from{transform:scale(.3) rotate(-8deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes gpulse{from{box-shadow:0 0 18px rgba(224,22,47,.5)}to{box-shadow:0 0 60px rgba(255,30,60,.95)}}
+.tape{height:24px;background:repeating-linear-gradient(-45deg,#ffc94d 0 14px,#1f0508 14px 28px);background-size:39.6px 100%;animation:tape .7s linear infinite}
+@keyframes tape{to{background-position:39.6px 0}}
+.gbody{padding:22px 18px 24px;display:flex;flex-direction:column;gap:14px;min-height:250px;justify-content:center}
+.gkicker{font-family:var(--display);color:#ffc94d;letter-spacing:.35em;font-size:15px;animation:blink .5s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+.gtitle{font-family:var(--display);font-size:clamp(26px,8vw,32px);color:#fff;text-shadow:0 0 18px #e0162f;text-wrap:balance}
+.gtext{font-weight:700;font-size:16px;line-height:1.7;text-wrap:balance}
+.gbtns{display:grid;grid-template-columns:1fr 1.2fr;gap:10px;margin-top:6px}
+.gnum{font-family:var(--display);font-size:clamp(90px,34vw,150px);line-height:1.1;color:#fff;text-shadow:0 0 30px #ff1030}
+.gnum.go{font-size:clamp(56px,20vw,90px);color:#ffc94d}
+.boom{animation:boom .8s ease-out}
+@keyframes boom{0%{transform:scale(3.2);opacity:0}25%{transform:scale(.9);opacity:1}40%{transform:scale(1.1)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){
+  .swap,.wobble,.quake,.gbox,.tape,.gkicker,.boom{animation:none}
+  body{transition:none}
+}
+#start{position:fixed;inset:0;z-index:30;border:0;border-radius:0;min-height:0;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:28px 20px;
+  color:#fff;font-family:var(--body);
+  background:
+    radial-gradient(60% 40% at 15% 12%,rgba(201,115,10,.45),transparent 70%),
+    radial-gradient(55% 38% at 88% 18%,rgba(15,168,144,.42),transparent 70%),
+    radial-gradient(60% 40% at 50% 100%,rgba(255,61,139,.5),transparent 70%),
+    radial-gradient(50% 35% at 92% 78%,rgba(224,22,47,.4),transparent 70%),
+    radial-gradient(50% 35% at 6% 72%,rgba(91,95,240,.45),transparent 70%),
+    #150a1c;
+  transition:opacity .45s,transform .45s}
+#start.bye{opacity:0;transform:scale(1.08);pointer-events:none}
+#start:active{transform:none}
+.s-tag{font-weight:700;font-size:15px;letter-spacing:.2em;color:#ffc94d}
+.s-fan{position:relative;width:230px;height:170px}
+.s-fan i{position:absolute;left:50%;top:8px;width:96px;height:140px;margin-left:-48px;border-radius:14px;
+  background:#fff7f2;box-shadow:0 10px 26px rgba(0,0,0,.5);overflow:hidden;font-style:normal;
+  display:flex;flex-direction:column;align-items:center}
+.s-fan i::before{content:"";width:100%;height:30px;background:var(--c)}
+.s-fan i b{margin-top:16px;font-family:var(--display);font-weight:400;font-size:52px;line-height:1;color:#2a0f24}
+.s-fan i small{font-weight:900;font-size:13px;color:var(--c);margin-top:2px}
+.s-fan i:nth-child(1){--c:#0fa890;transform:translateX(-72px) rotate(-16deg);animation:bob 3.2s ease-in-out infinite}
+.s-fan i:nth-child(2){--c:#5b5ff0;transform:translateX(72px) rotate(16deg);animation:bob 3.2s .5s ease-in-out infinite}
+.s-fan i:nth-child(3){--c:#ff3d8b;z-index:2;transform:translateY(-10px);animation:bob 3.2s .25s ease-in-out infinite}
+@keyframes bob{50%{margin-top:-9px}}
+.s-title{font-family:var(--display);font-weight:400;font-size:clamp(40px,13vw,58px);line-height:1.1;letter-spacing:.04em;
+  text-shadow:0 0 12px #ff3d8b,0 0 34px rgba(255,61,139,.7),0 4px 0 #2a0f24}
+.s-sub{font-weight:700;font-size:15px;opacity:.9;margin-top:-10px}
+.s-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:320px}
+.s-chips span{font-weight:900;font-size:13px;padding:5px 12px;border-radius:999px;background:var(--c);color:#fff}
+.s-go{font-family:var(--display);font-size:20px;letter-spacing:.22em;color:#ffc94d;margin-top:8px;animation:sblink 1.1s ease-in-out infinite}
+@keyframes sblink{50%{opacity:.2}}
+.s-note{font-size:12px;font-weight:700;opacity:.65;text-wrap:balance;text-align:center}
+@media (prefers-reduced-motion:reduce){.s-fan i,.s-go{animation:none}#start{transition:none}}
+</style>
+</head>
+<body data-mode="jinsei">
+<header>
+  <h1>価値観診断</h1>
+  <span class="count" id="count"></span>
+</header>
+<div class="modes" role="group" aria-label="モード">
+  <button type="button" data-m="jinsei" aria-pressed="true">人生編</button>
+  <button type="button" data-m="moshimo" aria-pressed="false">もしも編</button>
+  <button type="button" data-m="deep" aria-pressed="false">恋愛編</button>
+  <button type="button" data-m="normal" aria-pressed="false">ピンク編</button>
+  <button type="button" data-m="hard" aria-pressed="false">ハード編</button>
+  <button type="button" data-m="mix" aria-pressed="false">全部ミックス</button>
+</div>
+<main>
+  <section class="card" id="card" aria-live="polite">
+    <div class="q"><small id="no"></small><span id="q"></span></div>
+    <ol id="opts"></ol>
+  </section>
+</main>
+<nav>
+  <button id="prev" type="button">もどる</button>
+  <button id="next" type="button" class="main">次のお題</button>
+  <button id="shuffle" type="button">まぜる</button>
+</nav>
+<button id="start" type="button" aria-label="価値観診断をはじめる">
+  <span class="s-tag">本音を、3位まで。</span>
+  <span class="s-fan" aria-hidden="true">
+    <i><b>2</b><small>位</small></i>
+    <i><b>3</b><small>位</small></i>
+    <i><b>1</b><small>位</small></i>
+  </span>
+  <span class="s-title">価値観診断</span>
+  <span class="s-sub">お題カード 全50問</span>
+  <span class="s-chips" aria-hidden="true">
+    <span style="--c:#c9730a">人生</span><span style="--c:#0fa890">もしも</span><span style="--c:#5b5ff0">恋愛</span><span style="--c:#ff3d8b">ピンク</span><span style="--c:#e0162f">ハード</span>
+  </span>
+  <span class="s-go">TAP TO START</span>
+  <span class="s-note">順位カードとボードは手元のものを使います</span>
+</button>
+<div id="flash" aria-hidden="true"></div>
+<div id="fx" aria-hidden="true"></div>
+<div id="gate" role="dialog" aria-modal="true" aria-labelledby="gtitle" hidden>
+  <div class="gbox" id="gbox">
+    <div class="tape"></div>
+    <div class="gbody">
+      <div id="gmsg" style="display:contents">
+        <div class="gkicker" id="gkicker"></div>
+        <div class="gtitle" id="gtitle"></div>
+        <p class="gtext" id="gtext"></p>
+        <div class="gbtns">
+          <button type="button" id="gno"></button>
+          <button type="button" id="gyes" class="main"></button>
+        </div>
+      </div>
+      <div class="gnum" id="gnum" hidden></div>
+    </div>
+    <div class="tape"></div>
+  </div>
+</div>
+<script>
+const DECKS={
+jinsei:{name:"人生編",cards:[
+ ["一生に一つだけ手に入るなら？",["使い切れないお金","健康な体","最高のパートナー","ずば抜けた才能","自由な時間","名声","心の平穏"]],
+ ["仕事を選ぶとき一番大事なのは？",["給料","やりがい","人間関係","休みの多さ","安定","成長できること","勤務地"]],
+ ["一番「幸せだ」と感じる瞬間は？",["うまい飯を食べている時","布団に入る瞬間","人に感謝された時","一人で過ごす時間","仲間と笑っている時","何かをやり遂げた時","給料日"]],
+ ["一番苦手なタイプの人は？",["自慢が多い","否定から入る","時間にルーズ","機嫌が顔に出る","話を聞かない","恩着せがましい","距離が近すぎる"]],
+ ["お金を一番かけたいのは？",["食","住まい","旅","趣味","人付き合い","学び","健康"]],
+ ["自分が一番隠している一面は？",["嫉妬深さ","見栄っ張り","さみしがり","怠け者","計算高さ","自信のなさ","冷たさ"]],
+ ["人生をやり直せるなら変えたいのは？",["進学先","最初の仕事","結婚の相手やタイミング","住む場所","あの日言った一言","挑戦しなかったこと","何も変えない"]],
+ ["子どもの頃の自分に一つだけ伝えるなら？",["もっと遊べ","勉強しておけ","その友達を大事にしろ","気にしすぎるな","体を動かせ","親ともっと話せ","そのままでいい"]],
+ ["老後に一番怖いのは？",["孤独","お金がない","健康を失う","やることがない","誰にも思い出されない","家族に迷惑をかける","後悔が残る"]],
+ ["死ぬ前に一番後悔しそうなのは？",["好きと言わなかった","働きすぎた","挑戦しなかった","人に合わせすぎた","親孝行が足りなかった","友人と疎遠になった","体を大事にしなかった"]]
+]},
+moshimo:{name:"もしも編",cards:[
+ ["もしも、1日だけ透明人間になれるなら？",["上司の本音を聞きに行く","映画館をはしごする","立入禁止の場所に入る","国の機密を見に行く","友達にいたずらし放題","飛行機にこっそり乗る","何もせず家で寝る"]],
+ ["もしも、無人島に一つだけ持っていけるなら？",["ナイフ","ライター","圏外のスマホ","分厚い本","寝袋","調味料セット","釣り竿"]],
+ ["もしも、1年間の休みと生活費がもらえるなら？",["世界一周","資格や勉強","ひたすらゲーム","田舎で畑仕事","創作活動","体を鍛え直す","本当に何もしない"]],
+ ["もしも、過去の一日に戻れるなら？",["子どもの頃の夏休み","学生時代の文化祭","初恋の日","大失敗したあの日","人生で一番笑った日","生まれる前の両親を見に行く","戻らなくていい"]],
+ ["もしも、一生一つの料理しか食べられないなら？",["カレー","ラーメン","寿司","焼肉","おにぎり","パスタ","ご飯と味噌汁"]],
+ ["もしも、1種類の生き物とだけ話せるなら？",["犬","猫","カラス","クマ","イルカ","馬","ゴキブリ"]],
+ ["もしも、明日から別の仕事に就くなら？",["喫茶店のマスター","漁師","探偵","宇宙飛行士","学校の先生","芸人","農家"]],
+ ["もしも、宝くじで3億円当たったら最初にするのは？",["仕事を辞める","家を買う","誰にも言わず貯金","親に渡す","投資に回す","豪華な旅行","友達に盛大におごる"]],
+ ["もしも、地味に不便な呪いを一つ受けるなら？",["靴下が必ず片方なくなる","信号が全部赤になる","傘を忘れた日だけ雨が降る","充電が常に20%","エレベーターが必ず各階に止まる","くしゃみが出そうで出ない","名前を必ず一度間違えられる"]],
+ ["もしも、好きな時代に1週間住めるなら？",["縄文時代","平安時代","戦国時代","江戸時代","明治時代","昭和30年代","バブル期"]]
+]},
+normal:{name:"ピンク編",cards:[
+ ["正直、一番グッとくる瞬間は？",["髪を結ぶ／ネクタイを緩める","耳元でささやかれる","風呂上がり","酔って甘えてくる","不意のボディタッチ","寝起きの無防備な姿","汗をぬぐう仕草"]],
+ ["夜の自分を動物に例えると？",["狼","子犬","ナマケモノ","ウサギ","マグロ","猫（気分次第）","発情期のサル"]],
+ ["ラブホで一番テンションが上がる設備は？",["ジャグジー","鏡張り","コスプレ貸出","カラオケ","謎の照明パネル","回転ベッド","充実しすぎたフードメニュー"]],
+ ["着てほしい／着てみたいコスプレは？",["ナース","制服","メイド・執事","彼シャツ","浴衣","スーツ・OL","バニー"]],
+ ["言われたら一番興奮する一言は？",["「今日、泊まっていい？」","「もう我慢できない」","「電気消して」","「好きにしていいよ」","「もう一回」","「声、出ちゃう」","「誰にも言わないでね」"]],
+ ["自分の中で一番強いフェチは？",["匂い","声","手・指","脚","鎖骨・うなじ","尻","胸・胸板"]],
+ ["終わった直後、一番やりがちなのは？",["即スマホ","即寝","くっつく","シャワー直行","何か食べる","感想戦を始める","賢者タイムで人生を考える"]],
+ ["一度はやってみたいシチュエーションは？",["車の中","露天風呂付き客室","オフィス","夜の海辺","キッチン","試着室","カラオケボックス"]],
+ ["最中に起きたら一番萎えるのは？",["親から電話","ペットがじっと見ている","相手が笑い出す","足がつる","違う名前で呼ばれる","宅配便のチャイム","隣人からの壁ドン"]],
+ ["自分の「スイッチ」が入るきっかけは？",["お酒","いい匂い","キス","深夜のテンション","相手からの誘い","ケンカの後の仲直り","旅先の解放感"]]
+]},
+hard:{name:"ピンクハード編",cards:[
+ ["ベッドの上での自分のタイプは？",["ドS","ややS","その日の気分次第","ややM","ドM","ひたすらご奉仕型","完全おまかせ型"]],
+ ["一番興奮するプレイは？",["目隠し","軽く縛る／縛られる","言葉責め","鏡の前","声を我慢させる／する","おもちゃ","コスプレ"]],
+ ["触られると一番弱い場所は？",["耳","首筋","背中","内もも","脇腹","胸","腰"]],
+ ["一番好きな体位は？",["正常位","バック","騎乗位","対面座位","寝バック","立ったまま","横向きで後ろから"]],
+ ["自分の理想の頻度は？",["毎日","週3〜4","週1〜2","月2〜3","月1","気が向いたら","なくても平気"]],
+ ["一番ムラムラするタイミングは？",["朝起きた瞬間","仕事中","酔った帰り道","風呂の中","寝る直前","疲れている時ほど","相手が忙しそうな時"]],
+ ["相手に本当は言いたいのは？",["もっと声を出して","もっと攻めてきて","もっと時間をかけて","ちゃんと感想を言って","電気はつけたままで","そっちから誘って","終わってすぐ寝ないで"]],
+ ["人生で一番攻めた場所は？",["車の中","屋外","職場","実家","カラオケ","旅館の露天風呂","トイレ"]],
+ ["前戯で一番大事なのは？",["キス","言葉","じらし","雰囲気づくり","マッサージ","とにかく長さ","正直なくてもいい"]],
+ ["相手に打ち明けられて一番戸惑う性癖は？",["赤ちゃん言葉で甘えたい","足を舐めたい","踏まれたい","誰かに見られたい","匂いを嗅ぎ続けたい","きつく縛られたい","録画して残したい"]]
+]},
+deep:{name:"恋愛編",cards:[
+ ["パートナーに一番求めるものは？",["安心感","刺激","尊敬できること","笑い","経済力","体の相性","お互いの自由"]],
+ ["一番許せない裏切りは？",["体だけの浮気","心の浮気","借金を隠していた","過去を偽っていた","陰で悪口を言っていた","約束を破り続ける","無関心"]],
+ ["一気に恋が冷める瞬間は？",["店員に横柄","お金にルーズ","会話が自慢ばかり","清潔感がない","束縛がきつい","小さな嘘をつく","人の悪口で盛り上がる"]],
+ ["友達と恋人の境界線、どこからアウト？",["二人きりで食事","二人きりで飲み","毎日連絡を取り合う","悩みを一番に相談する","手をつなぐ","二人で泊まり","キス"]],
+ ["恋人に一番してほしくないことは？",["勝手にスマホを見る","元恋人と連絡を取る","記念日を忘れる","人前でけなす","予定を勝手に決める","自分の友人を悪く言う","既読のまま放置"]],
+ ["理想の告白のされ方は？",["直接ストレートに","手紙","電話","酔った勢いで","何となく流れで","凝ったサプライズ","自分から言いたい"]],
+ ["恋愛で自分が一番やりがちな失敗は？",["尽くしすぎる","束縛する","気持ちを言わない","すぐ冷める","相手を試す","相手に合わせすぎる","連絡を放置する"]],
+ ["「愛されている」と一番感じるのは？",["言葉で伝えられる","一緒に過ごす時間","触れ合い","贈り物","黙って助けてくれる","話したことを覚えている","弱さを見せてくれる"]],
+ ["長続きする二人に一番必要なのは？",["会話","金銭感覚の一致","笑いのツボ","適度な距離","体の相性","共通の趣味","我慢"]],
+ ["初デートで一番見るところは？",["食べ方","店員への態度","お金の払い方","会話のテンポ","服装","時間を守るか","スマホの扱い"]]
+]}
+};
+const L="ABCDEFG";
+const KEYS=Object.keys(DECKS);
+let mode="jinsei",order=[],pos=0;
+const $=id=>document.getElementById(id);
+function mix(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function show(){
+  const [k,n]=order[pos],d=DECKS[k],[q,o]=d.cards[n];
+  document.body.dataset.mode=k;
+  $("no").textContent=d.name+" ・ お題 "+(n+1);
+  $("q").textContent=q;
+  $("opts").innerHTML="";
+  o.forEach((t,i)=>{
+    const li=document.createElement("li"),b=document.createElement("span"),s=document.createElement("span");
+    b.className="k";b.textContent=L[i];s.textContent=t;li.append(b,s);$("opts").append(li);
+  });
+  $("count").textContent=(pos+1)+" / "+order.length;
+  const c=$("card");c.classList.remove("swap","wobble","quake");void c.offsetWidth;
+  c.classList.add(k==="normal"?"wobble":k==="hard"?"quake":"swap");
+  fx(k);
+}
+function setMode(m){
+  mode=m;pos=0;
+  order=m==="mix"
+    ? mix(KEYS.flatMap(k=>DECKS[k].cards.map((_,i)=>[k,i])))
+    : DECKS[m].cards.map((_,i)=>[m,i]);
+  document.querySelectorAll(".modes button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===m));
+  show();
+}
+document.querySelectorAll(".modes button").forEach(b=>b.onclick=()=>{
+  const m=b.dataset.m;
+  if(m==="hard"&&!gatePassed)gate(0);else setMode(m);
+});
+
+/* 演出 */
+const RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
+const rnd=(a,b)=>a+Math.random()*(b-a);
+function spawn(cls,txt,size,dur,wait,color){
+  const e=document.createElement("span");
+  e.className=cls;e.textContent=txt;
+  e.style.left=rnd(2,90)+"%";e.style.fontSize=size+"px";
+  if(color)e.style.color=color;
+  e.style.setProperty("--x",rnd(-70,70)+"px");
+  e.style.setProperty("--r",rnd(-200,200)+"deg");
+  e.style.setProperty("--d",dur+"s");
+  e.style.setProperty("--w",wait+"s");
+  e.addEventListener("animationend",()=>e.remove());
+  $("fx").append(e);
+}
+const STAMPS=["やばい","キケン","自己責任","後戻り不可","覚悟しろ"];
+function fx(k){
+  if(RM)return;
+  if(k==="normal"){
+    const cols=["#ff3d8b","#ff86b6","#ffffff","#ffc94d"];
+    for(let i=0;i<22;i++)spawn("heart","♥︎",rnd(20,52),rnd(1.6,2.8),rnd(0,.7),cols[i%cols.length]);
+  }else if(k==="hard"){
+    const f=$("flash");f.classList.remove("on");void f.offsetWidth;f.classList.add("on");
+    const g=["🔥","🔥","🔥","⚠️","💀"];
+    for(let i=0;i<26;i++)spawn("fire",g[i%g.length],rnd(26,58),rnd(1,1.9),rnd(0,.6));
+    const st=document.createElement("span");
+    st.className="stamp";st.textContent=STAMPS[Math.floor(Math.random()*STAMPS.length)];
+    st.addEventListener("animationend",()=>st.remove());
+    $("fx").append(st);
+  }
+}
+
+/* ハード編の入場ゲート */
+const GATE=[
+ {k:"警告",t:"ピンクハード編",x:"この先、品位の保証は一切ありません。",no:"引き返す",yes:"入る"},
+ {k:"再警告",t:"本当に入りますか？",x:"ここで聞いたことは、この卓の外に持ち出さないこと。",no:"やっぱりやめる",yes:"それでも入る"},
+ {k:"最終確認",t:"全員、覚悟はいいか",x:"一人でも目をそらした人がいたら、いますぐ引き返してください。",no:"まだ早い",yes:"全員できている"}
+];
+function gate(i){
+  const s=GATE[i],G=$("gate"),B=$("gbox");
+  $("gmsg").style.display="contents";$("gnum").hidden=true;
+  $("gkicker").textContent="― "+s.k+" ―";$("gtitle").textContent=s.t;$("gtext").textContent=s.x;
+  $("gno").textContent=s.no;$("gyes").textContent=s.yes;
+  G.hidden=false;
+  B.style.animation="none";void B.offsetWidth;B.style.animation="";
+  if(!RM&&i>0){const f=$("flash");f.classList.remove("on");void f.offsetWidth;f.classList.add("on")}
+  $("gno").onclick=()=>{G.hidden=true};
+  $("gyes").onclick=()=>{i+1<GATE.length?gate(i+1):countdown()};
+  $("gyes").focus();
+}
+function countdown(){
+  if(RM){enter();return}
+  $("gmsg").style.display="none";
+  const n=$("gnum");n.hidden=false;
+  const seq=["3","2","1","解禁"];let i=0;
+  (function tick(){
+    if(i>=seq.length){enter();return}
+    n.textContent=seq[i];n.classList.toggle("go",i===seq.length-1);
+    n.classList.remove("boom");void n.offsetWidth;n.classList.add("boom");
+    const f=$("flash");f.classList.remove("on");void f.offsetWidth;f.classList.add("on");
+    i++;setTimeout(tick,i===seq.length?950:800);
+  })();
+}
+let gatePassed=false;
+function enter(){gatePassed=true;$("gate").hidden=true;setMode("hard")}
+$("next").onclick=()=>{pos=(pos+1)%order.length;show()};
+$("prev").onclick=()=>{pos=(pos-1+order.length)%order.length;show()};
+$("shuffle").onclick=()=>{mix(order);pos=0;show()};
+setMode("jinsei");
+$("start").onclick=()=>{const e=$("start");e.classList.add("bye");setTimeout(()=>e.remove(),480)};
+</script>
+</body>
+</html>
