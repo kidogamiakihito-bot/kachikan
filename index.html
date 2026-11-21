@@ -177,8 +177,8 @@ main{perspective:1000px}
   <button type="button" data-m="jinsei" aria-pressed="true">人生編</button>
   <button type="button" data-m="moshimo" aria-pressed="false">もしも編</button>
   <button type="button" data-m="deep" aria-pressed="false">恋愛編</button>
-  <button type="button" data-m="normal" aria-pressed="false">ピンク編</button>
-  <button type="button" data-m="hard" aria-pressed="false">ハード編</button>
+  <button type="button" data-m="normal" aria-pressed="false">セクシー編</button>
+  <button type="button" data-m="hard" aria-pressed="false">R18編</button>
   <button type="button" data-m="mix" aria-pressed="false">全部ミックス</button>
 </div>
 <main>
@@ -202,7 +202,7 @@ main{perspective:1000px}
   <span class="s-title">価値観診断</span>
   <span class="s-sub">お題カード 全50問</span>
   <span class="s-chips" aria-hidden="true">
-    <span style="--c:#c9730a">人生</span><span style="--c:#0fa890">もしも</span><span style="--c:#5b5ff0">恋愛</span><span style="--c:#ff3d8b">ピンク</span><span style="--c:#e0162f">ハード</span>
+    <span style="--c:#c9730a">人生</span><span style="--c:#0fa890">もしも</span><span style="--c:#5b5ff0">恋愛</span><span style="--c:#ff3d8b">セクシー</span><span style="--c:#e0162f">R18</span>
   </span>
   <span class="s-go">TAP TO START</span>
   <span class="s-note">順位カードとボードは手元のものを使います</span>
@@ -253,7 +253,7 @@ moshimo:{name:"もしも編",cards:[
  ["もしも、まだ我慢できる地味な呪いは？",["靴下が必ず片方なくなる","信号が全部赤になる","傘を忘れた日だけ雨が降る","充電が常に20%","エレベーターが必ず各階に止まる","くしゃみが出そうで出ない","名前を必ず一度間違えられる"]],
  ["もしも、好きな時代に1週間住めるなら？",["縄文時代","平安時代","戦国時代","江戸時代","明治時代","昭和30年代","バブル期"]]
 ]},
-normal:{name:"ピンク編",cards:[
+normal:{name:"セクシー編",cards:[
  ["正直、グッとくる瞬間は？",["髪を結ぶ／ネクタイを緩める","耳元でささやかれる","風呂上がり","酔って甘えてくる","不意のボディタッチ","寝起きの無防備な姿","汗をぬぐう仕草"]],
  ["相手にするなら、夜はどの動物がいい？",["狼","子犬","ナマケモノ","ウサギ","マグロ","猫（気分次第）","発情期のサル"]],
  ["ラブホでテンションが上がる設備は？",["ジャグジー","鏡張り","コスプレ貸出","カラオケ","謎の照明パネル","回転ベッド","充実しすぎたフードメニュー"]],
@@ -265,7 +265,7 @@ normal:{name:"ピンク編",cards:[
  ["最中に起きたら萎えるのは？",["親から電話","ペットがじっと見ている","相手が笑い出す","足がつる","違う名前で呼ばれる","宅配便のチャイム","隣人からの壁ドン"]],
  ["自分の「スイッチ」が入るきっかけは？",["お酒","いい匂い","キス","深夜のテンション","相手からの誘い","ケンカの後の仲直り","旅先の解放感"]]
 ]},
-hard:{name:"ピンクハード編",cards:[
+hard:{name:"R18編",cards:[
  ["相手に求めるタイプは？",["ドS","ややS","その日の気分次第","ややM","ドM","ひたすらご奉仕型","完全おまかせ型"]],
  ["興奮するプレイは？",["目隠し","軽く縛る／縛られる","言葉責め","鏡の前","声を我慢させる／する","おもちゃ","コスプレ"]],
  ["触られると弱い場所は？",["耳","首筋","背中","内もも","脇腹","胸","腰"]],
@@ -412,7 +412,7 @@ function fx(k){
 
 /* ハード編の入場ゲート */
 const GATE=[
- {k:"警告",t:"ピンクハード編",x:"この先、品位の保証は一切ありません。",no:"引き返す",yes:"入る"},
+ {k:"警告",t:"R18編",x:"この先、品位の保証は一切ありません。",no:"引き返す",yes:"入る"},
  {k:"再警告",t:"本当に入りますか？",x:"ここで聞いたことは、この卓の外に持ち出さないこと。",no:"やっぱりやめる",yes:"それでも入る"},
  {k:"最終確認",t:"全員、覚悟はいいか",x:"一人でも目をそらした人がいたら、いますぐ引き返してください。",no:"まだ早い",yes:"全員できている"}
 ];
