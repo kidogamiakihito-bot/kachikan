@@ -47,7 +47,7 @@ body{
   overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;
   transition:background-color .25s;
 }
-header{display:flex;align-items:baseline;justify-content:space-between;width:100%;max-width:440px}
+header{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:440px}
 h1{font-family:var(--display);font-weight:400;font-size:22px;color:var(--accent);letter-spacing:.04em;
    text-shadow:0 0 14px var(--glow)}
 .count{font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;color:var(--gold)}
@@ -166,12 +166,33 @@ main{perspective:1000px}
 @keyframes sblink{50%{opacity:.2}}
 .s-note{font-size:12px;font-weight:700;opacity:.65;text-wrap:balance;text-align:center}
 @media (prefers-reduced-motion:reduce){.s-fan i,.s-go{animation:none}#start{transition:none}}
+.hright{display:flex;align-items:center;gap:10px}
+.gear{min-height:36px;width:36px;padding:0;border-radius:50%;border:2px solid var(--accent);display:grid;place-items:center;background:transparent;color:var(--soft)}
+.gear svg{width:18px;height:18px}
+#set{position:fixed;inset:0;z-index:25;display:grid;place-items:center;padding:20px;background:rgba(10,4,14,.88)}
+#set[hidden]{display:none}
+.sbox{width:100%;max-width:380px;max-height:100%;overflow-y:auto;background:#fff7f2;color:#2a0f24;border-radius:20px;padding:20px 18px;
+  display:flex;flex-direction:column;gap:16px;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.sbox h2{font-family:var(--display);font-weight:400;font-size:22px;letter-spacing:.06em}
+.sbox h3{font-size:14px;font-weight:900;letter-spacing:.1em;color:#8a6f80}
+.sgroup{display:flex;flex-direction:column;gap:8px}
+.srow{display:flex;align-items:center;gap:12px;min-height:48px;padding:6px 12px;border-radius:12px;background:#f3e7ea;font-weight:900;font-size:17px;cursor:pointer}
+.srow input{width:22px;height:22px;accent-color:var(--c);flex:none}
+.srow .dot{width:12px;height:12px;border-radius:50%;background:var(--c);flex:none}
+.srow .n{margin-left:auto;font-size:13px;font-weight:700;color:#8a6f80;font-variant-numeric:tabular-nums}
+.stotal{font-weight:700;font-size:14px;color:#8a6f80}
+.stotal.bad{color:#e0162f}
+.sw{display:flex;align-items:center;justify-content:space-between;min-height:52px;padding:6px 12px;border-radius:12px;background:#f3e7ea;font-weight:900;font-size:17px}
+.toggle{min-height:40px;width:92px;border-radius:999px;border:0;font-size:15px;background:#d8c8ce;color:#2a0f24}
+.toggle[aria-pressed="true"]{background:#2a0f24;color:#ffc94d}
+.sbox .close{background:#2a0f24;color:#fff;border-color:#2a0f24}
+.sbox .close:disabled{opacity:.35}
 </style>
 </head>
 <body data-mode="jinsei">
 <header>
   <h1>価値観診断</h1>
-  <span class="count" id="count"></span>
+  <span class="hright"><span class="count" id="count"></span><button type="button" class="gear" id="gearbtn" aria-label="設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></span>
 </header>
 <div class="modes" role="group" aria-label="モード">
   <button type="button" data-m="jinsei" aria-pressed="true">人生編</button>
@@ -179,7 +200,7 @@ main{perspective:1000px}
   <button type="button" data-m="deep" aria-pressed="false">恋愛編</button>
   <button type="button" data-m="normal" aria-pressed="false">セクシー編</button>
   <button type="button" data-m="hard" aria-pressed="false">R18編</button>
-  <button type="button" data-m="mix" aria-pressed="false">全部ミックス</button>
+  <button type="button" data-m="mix" aria-pressed="false">ミックス</button>
 </div>
 <main>
   <section class="card" id="card" aria-live="polite">
@@ -207,6 +228,21 @@ main{perspective:1000px}
   <span class="s-go">TAP TO START</span>
   <span class="s-note">順位カードとボードは手元のものを使います</span>
 </button>
+<div id="set" role="dialog" aria-modal="true" aria-labelledby="settitle" hidden>
+  <div class="sbox">
+    <h2 id="settitle">設定</h2>
+    <div class="sgroup">
+      <h3>ミックスに入れる編</h3>
+      <div id="setdecks" class="sgroup"></div>
+      <div class="stotal" id="settotal"></div>
+    </div>
+    <div class="sgroup">
+      <h3>サウンド</h3>
+      <div class="sw"><span>効果音</span><button type="button" class="toggle" id="setsound" aria-pressed="true">ON</button></div>
+    </div>
+    <button type="button" class="close main" id="setclose">閉じる</button>
+  </div>
+</div>
 <div id="flash" aria-hidden="true"></div>
 <div id="fx" aria-hidden="true"></div>
 <div id="gate" role="dialog" aria-modal="true" aria-labelledby="gtitle" hidden>
@@ -324,7 +360,7 @@ function hiss(t0,dur,vol,ftype,f0,f1,q){
   s.connect(f).connect(g).connect(AC.destination);s.start(t0);
 }
 function sfx(k){
-  if(!AC||AC.state!=="running")return;
+  if(!settings.sound||!AC||AC.state!=="running")return;
   const t=AC.currentTime+.01;
   if(k==="normal"){            /* ピンク編: シャッ → きらきら上がる鈴 → ぽよん */
     hiss(t,.16,.16,"bandpass",1800,6000,.8);
@@ -368,7 +404,7 @@ function show(){
 function setMode(m){
   mode=m;pos=0;
   order=m==="mix"
-    ? mix(KEYS.flatMap(k=>DECKS[k].cards.map((_,i)=>[k,i])))
+    ? mix(settings.mix.flatMap(k=>DECKS[k].cards.map((_,i)=>[k,i])))
     : DECKS[m].cards.map((_,i)=>[m,i]);
   document.querySelectorAll(".modes button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===m));
   show();
@@ -448,6 +484,42 @@ function enter(){gatePassed=true;$("gate").hidden=true;setMode("hard")}
 $("next").onclick=()=>{pos=(pos+1)%order.length;show()};
 $("prev").onclick=()=>{pos=(pos-1+order.length)%order.length;show()};
 $("shuffle").onclick=()=>{mix(order);pos=0;show()};
+
+/* 設定: ミックスの対象と効果音。この端末にだけ保存する */
+const COLORS={jinsei:"#c9730a",moshimo:"#0fa890",deep:"#5b5ff0",normal:"#ff3d8b",hard:"#e0162f"};
+const SET_ORDER=["jinsei","moshimo","deep","normal","hard"];
+let settings={mix:SET_ORDER.slice(),sound:true};
+try{const v=JSON.parse(localStorage.getItem("kachikan-settings")||"null");
+  if(v){if(Array.isArray(v.mix))settings.mix=v.mix.filter(k=>DECKS[k]);if(typeof v.sound==="boolean")settings.sound=v.sound}}catch(e){}
+function saveSettings(){try{localStorage.setItem("kachikan-settings",JSON.stringify(settings))}catch(e){}}
+function mixTotal(){return settings.mix.reduce((a,k)=>a+DECKS[k].cards.length,0)}
+function drawSettings(){
+  const box=$("setdecks");box.innerHTML="";
+  SET_ORDER.forEach(k=>{
+    const l=document.createElement("label");l.className="srow";l.style.setProperty("--c",COLORS[k]);
+    const c=document.createElement("input");c.type="checkbox";c.id="mix-"+k;c.checked=settings.mix.includes(k);
+    c.onchange=()=>{settings.mix=SET_ORDER.filter(x=>x===k?c.checked:settings.mix.includes(x));saveSettings();drawTotal()};
+    const d=document.createElement("span");d.className="dot";
+    const t=document.createElement("span");t.textContent=DECKS[k].name;
+    const n=document.createElement("span");n.className="n";n.textContent=DECKS[k].cards.length+"問";
+    l.append(c,d,t,n);box.append(l);
+  });
+  drawTotal();drawSound();
+}
+function drawTotal(){
+  const t=$("settotal"),n=mixTotal();
+  t.textContent=n?"ミックスは計"+n+"問":"1つ以上選んでください";
+  t.classList.toggle("bad",!n);$("setclose").disabled=!n;
+}
+function drawSound(){const b=$("setsound");b.setAttribute("aria-pressed",settings.sound);b.textContent=settings.sound?"ON":"OFF"}
+$("setsound").onclick=()=>{settings.sound=!settings.sound;saveSettings();drawSound();if(settings.sound){ac();sfx("swish")}};
+let mixSig=settings.mix.join();
+$("gearbtn").onclick=()=>{mixSig=settings.mix.join();drawSettings();$("set").hidden=false;$("setclose").focus()};
+$("setclose").onclick=()=>{
+  if(!mixTotal())return;
+  $("set").hidden=true;
+  if(mode==="mix"&&settings.mix.join()!==mixSig)setMode("mix");
+};
 setMode("jinsei");
 /* 勝手なズームを止める: ピンチとダブルタップ */
 ["gesturestart","gesturechange","gestureend"].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
